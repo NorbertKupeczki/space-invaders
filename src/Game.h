@@ -23,14 +23,20 @@ class Game
   void loadTexture(sf::Texture& texture,sf::Sprite& sprite, std::string path);
   void loadTexture(sf::Texture& texture, std::string path);
   void initTextures();
+  void initPlayer();
+  void initAliens();
   void moveBackground(float dt);
+  bool moveShips(float dt);
+  void changeAlienDirection();
+  void movePlayer(float dt);
 
   sf::RenderWindow& window;
   sf::Sprite bg_sprite;
   sf::Texture bg_texture;
 
-
   sf::Texture player_ship;
+  sf::Texture alien_ship;
+  sf::Texture laser_green;
   sf::Texture alien_blue;
   sf::Texture alien_red;
   sf::Texture alien_green;
@@ -38,6 +44,7 @@ class Game
 
   Alien* aliens;
   PlayerShip player;
+  const int GRID_SIZE = 10;
 
 };
 
