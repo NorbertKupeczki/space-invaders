@@ -25,10 +25,16 @@ class Game
   void initTextures();
   void initPlayer();
   void initAliens();
+  void initFont();
   void moveBackground(float dt);
   bool moveShips(float dt);
   void changeAlienDirection();
+  void increaseAlienSpeed();
   void movePlayer(float dt);
+  void collisionCheck();
+
+  sf::Font font;
+  sf::Text player_score;
 
   sf::RenderWindow& window;
   sf::Sprite bg_sprite;

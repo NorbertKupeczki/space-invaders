@@ -1,9 +1,12 @@
 #include "Player.h"
+#include <iostream>
 
 PlayerShip::PlayerShip()
 {
   sprite = new sf::Sprite;
   laser = new Laser[MAX_PROJECTILE];
+  score = 0;
+  cooldown = 0;
 }
 
 PlayerShip::~PlayerShip()
@@ -62,18 +65,32 @@ void PlayerShip::movePlayer(float screen_width, float dt)
   {
     sprite->move(speed * direction.x * dt, 0.0);
   }
+
+  if (cooldown > 0)
+  {
+    cooldown -= dt;
+  }
+  else if (cooldown < 0)
+  {
+    cooldown = 0;
+  }
 }
 
 void PlayerShip::fireLaser()
 {
-  for (int i = 0; i < MAX_PROJECTILE; ++i)
+  if (cooldown == 0)
   {
-    if (!laser[i].isInPlay())
+    for (int i = 0; i < MAX_PROJECTILE; ++i)
     {
-      laser[i].setState(true);
-      laser[i].setPos(sprite->getPosition().x + sprite->getGlobalBounds().width / 2,
-                      sprite->getPosition().y);
-      break;
+      if (!laser[i].isInPlay())
+      {
+        cooldown = RATE_OF_FIRE;
+        laser[i].setState(true);
+        laser[i].setPos(
+          sprite->getPosition().x + sprite->getGlobalBounds().width / 2,
+          sprite->getPosition().y);
+        break;
+      }
     }
   }
 }
@@ -86,4 +103,29 @@ int PlayerShip::getMaxProjectile()
 Laser * PlayerShip::projectiles()
 {
   return laser;
+}
+
+int PlayerShip::getScore()
+{
+  return score;
+}
+
+void PlayerShip::addScore(int points)
+{
+  score += points;
+}
+
+void PlayerShip::resetScore()
+{
+  score = 0;
+}
+
+void PlayerShip::setFiringState(bool state)
+{
+  firing = state;
+}
+
+bool PlayerShip::isFiring()
+{
+  return firing;
 }

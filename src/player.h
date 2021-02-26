@@ -19,15 +19,23 @@ class PlayerShip
   void fireLaser();
   int getMaxProjectile();
   Laser* projectiles();
+  int getScore();
+  void addScore(int points);
+  void resetScore();
+  void setFiringState(bool state);
+  bool isFiring();
 
  private:
   Vector2 direction = {0.0,0.0};
   float speed = 150.0;
   sf::Sprite* sprite = nullptr;
-  int rate_of_fire;
+  float cooldown;
+  int score;
+  bool firing = false;
 
   Laser* laser = nullptr;
-  const int MAX_PROJECTILE = 10;
+  const int MAX_PROJECTILE = 5;
+  const float RATE_OF_FIRE = 0.3;
 
 };
 

@@ -19,7 +19,7 @@ class Laser
 
  private:
   bool in_play;
-  float speed = 250.0;
+  float speed = 700.0;
   Vector2 vector = {0.0,0.0};
   sf::Sprite* sprite;
 

@@ -5,6 +5,7 @@ Alien::Alien()
   sprite = new sf::Sprite;
   speed = 20.0;
   in_game = true;
+  value = 10;
 }
 Alien::~Alien()
 {
@@ -25,8 +26,8 @@ bool Alien::moveAliens(float screen_w, float dt)
 {
   bool reverse_direction = false;
   sprite->move(vector.x * speed * dt,vector.y * speed * dt);
-  if (sprite->getPosition().x <= 0.0 ||
-      sprite->getPosition().x + sprite->getGlobalBounds().width >= screen_w &&
+  if ((sprite->getPosition().x <= 0.0 ||
+      sprite->getPosition().x + sprite->getGlobalBounds().width >= screen_w) &&
       in_game)
   {
     reverse_direction = true;
@@ -43,4 +44,19 @@ void Alien::changeDirection()
 bool Alien::isInGame()
 {
   return in_game;
+}
+
+void Alien::destroyAlien()
+{
+  in_game = false;
+}
+
+int Alien::getValue()
+{
+  return value;
+}
+
+void Alien::addSpeed(float speed_up)
+{
+  speed += speed_up;
 }

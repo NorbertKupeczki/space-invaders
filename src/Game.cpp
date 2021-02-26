@@ -19,27 +19,24 @@ bool Game::init()
   initTextures();
   initAliens();
   initPlayer();
+  initFont();
   return true;
 }
 
 void Game::update(float dt)
 {
+  player_score.setString("Score: " + std::to_string(player.getScore()));
   moveBackground(dt);
-
   if (moveShips(dt))
   {
     changeAlienDirection();
   }
-
   movePlayer(dt);
-
-  for (int i = 0; i < player.getMaxProjectile(); ++i)
+  if(player.isFiring())
   {
-    if (player.projectiles()[i].isInPlay())
-    {
-      player.projectiles()[i].moveLaser(dt);
-    }
+    player.fireLaser();
   }
+  collisionCheck();
 }
 
 void Game::render()
@@ -60,6 +57,7 @@ void Game::render()
       window.draw(*player.projectiles()[i].getSprite());
     }
   }
+  window.draw(player_score);
 }
 
 void Game::keyPressed(sf::Event event)
@@ -80,7 +78,7 @@ void Game::keyPressed(sf::Event event)
 
   if (event.key.code == sf::Keyboard::Space)
   {
-    player.fireLaser();
+    player.setFiringState(true);
   }
 }
 
@@ -90,6 +88,11 @@ void Game::keyReleased(sf::Event event)
       event.key.code == sf::Keyboard::Right)
   {
     player.setDir(0.0);
+  }
+
+  if (event.key.code == sf::Keyboard::Space)
+  {
+    player.setFiringState(false);
   }
 }
 
@@ -154,6 +157,20 @@ void Game::initAliens()
   }
 }
 
+void Game::initFont()
+{
+  if (!font.loadFromFile("Data/Fonts/OpenSans-Bold.ttf"))
+  {
+    std::cout << "Font did not load \n";
+  }
+
+  player_score.setString("Score: " + std::to_string(player.getScore()));
+  player_score.setFont(font);
+  player_score.setCharacterSize(20);
+  player_score.setFillColor(sf::Color(200,200,200,200));
+  player_score.setPosition(5.0,5.0);
+}
+
 void Game::moveBackground(float dt)
 {
   bg_sprite.move(0,50 * dt);
@@ -184,7 +201,58 @@ void Game::changeAlienDirection()
   }
 }
 
+void Game::increaseAlienSpeed()
+{
+  for (int i = 0; i < GRID_SIZE*GRID_SIZE/2; ++i)
+  {
+    aliens[i].addSpeed(5.0);
+  }
+}
+
 void Game::movePlayer(float dt)
 {
   player.movePlayer(window.getSize().x, dt);
+
+  for (int i = 0; i < player.getMaxProjectile(); ++i)
+  {
+    if (player.projectiles()[i].isInPlay())
+    {
+      player.projectiles()[i].moveLaser(dt);
+    }
+  }
+}
+
+void Game::collisionCheck()
+{
+  // Player collision with aliens
+  for (int i = 0; i < GRID_SIZE*GRID_SIZE/2; ++i)
+  {
+    if (aliens[i].getSprite()->getGlobalBounds().intersects(
+          player.getSprite()->getGlobalBounds())&&
+        aliens[i].isInGame())
+    {
+      std::cout << "Game Over";
+    }
+  }
+
+  // Lasers collision with aliens
+  for (int i = 0; i < player.getMaxProjectile(); ++i)
+  {
+    if (player.projectiles()[i].isInPlay())
+    {
+      for (int j = 0; j < GRID_SIZE * GRID_SIZE / 2; ++j)
+      {
+        if (
+          player.projectiles()[i].getSprite()->getGlobalBounds().intersects(
+            aliens[j].getSprite()->getGlobalBounds()) &&
+          aliens[j].isInGame())
+        {
+          player.projectiles()[i].setState(false);
+          aliens[j].destroyAlien();
+          increaseAlienSpeed();
+          player.addScore(aliens[j].getValue());
+        }
+      }
+    }
+  }
 }
