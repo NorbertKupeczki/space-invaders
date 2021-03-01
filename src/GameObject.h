@@ -11,8 +11,8 @@ class Alien
 
   void setTexture(sf::Texture& texture);
   sf::Sprite* getSprite();
-  bool moveAliens(float screen_w, float dt);
-  void changeDirection();
+  bool moveAliens(float screen_w, float dt, int move_type);
+  void changeDirection(int move_type);
   bool isInGame();
   void destroyAlien();
   int getValue();
@@ -24,6 +24,8 @@ class Alien
   float speed;
   Vector2 vector = {1.0,0.0};
   int value;
+
+  const float GRAVITY = 0.08;
 };
 
 

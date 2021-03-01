@@ -7,6 +7,7 @@ PlayerShip::PlayerShip()
   laser = new Laser[MAX_PROJECTILE];
   score = 0;
   cooldown = 0;
+  speed = 250.0;
 }
 
 PlayerShip::~PlayerShip()
@@ -78,17 +79,28 @@ void PlayerShip::movePlayer(float screen_width, float dt)
 
 void PlayerShip::fireLaser()
 {
+  static bool left_cannon = true;
   if (cooldown == 0)
   {
     for (int i = 0; i < MAX_PROJECTILE; ++i)
     {
       if (!laser[i].isInPlay())
       {
+        float offset;
+        if (left_cannon)
+        {
+          offset = -15.0;
+        }
+        else
+        {
+          offset = 15.0;
+        }
         cooldown = RATE_OF_FIRE;
         laser[i].setState(true);
         laser[i].setPos(
-          sprite->getPosition().x + sprite->getGlobalBounds().width / 2,
+          sprite->getPosition().x + sprite->getGlobalBounds().width / 2 + offset,
           sprite->getPosition().y);
+        left_cannon = !left_cannon;
         break;
       }
     }

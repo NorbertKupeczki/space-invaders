@@ -27,7 +27,7 @@ class PlayerShip
 
  private:
   Vector2 direction = {0.0,0.0};
-  float speed = 150.0;
+  float speed;
   sf::Sprite* sprite = nullptr;
   float cooldown;
   int score;
