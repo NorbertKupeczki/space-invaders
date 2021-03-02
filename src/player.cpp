@@ -8,6 +8,9 @@ PlayerShip::PlayerShip()
   score = 0;
   cooldown = 0;
   speed = 250.0;
+
+  laser_sbf.loadFromFile("Data/Sound/laser.ogg");
+  laser_snd.setBuffer(laser_sbf);
 }
 
 PlayerShip::~PlayerShip()
@@ -32,7 +35,7 @@ void PlayerShip::setLaserTexture(sf::Texture& texture)
 void PlayerShip::resetShip(float screen_width, float screen_height)
 {
   sprite->setPosition(screen_width/2 - sprite->getGlobalBounds().width/2,
-                      screen_height - sprite->getGlobalBounds().height * 1.5);
+                      screen_height - sprite->getGlobalBounds().height * 1.2);
 }
 
 sf::Sprite* PlayerShip::getSprite()
@@ -101,6 +104,7 @@ void PlayerShip::fireLaser()
           sprite->getPosition().x + sprite->getGlobalBounds().width / 2 + offset,
           sprite->getPosition().y);
         left_cannon = !left_cannon;
+        laser_snd.play();
         break;
       }
     }

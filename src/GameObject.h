@@ -1,6 +1,7 @@
 #ifndef SPACEINVADERS_GAMEOBJECT_H
 #define SPACEINVADERS_GAMEOBJECT_H
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "Vector2.h"
 
 class Alien
@@ -24,8 +25,10 @@ class Alien
   float speed;
   Vector2 vector = {1.0,0.0};
   int value;
+  const float GRAVITY = 0.0025;
 
-  const float GRAVITY = 0.08;
+  sf::Sound explosion_snd;
+  sf::SoundBuffer explosion_sbf;
 };
 
 

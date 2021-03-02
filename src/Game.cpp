@@ -1,4 +1,3 @@
-
 #include "Game.h"
 #include <iostream>
 #include <cmath>
@@ -12,6 +11,8 @@ Game::Game(sf::RenderWindow& game_window)
   game_state = IN_MENU;
   game_over_menu = TRY_ANOTHER;
   enemy_count = GRID_SIZE_Y * GRID_SIZE_X;
+  menu_sbf.loadFromFile("Data/Sound/menu.wav");
+  menu_snd.setBuffer(menu_sbf);
 }
 
 Game::~Game()
@@ -83,6 +84,7 @@ void Game::keyPressed(sf::Event event)
   {
     if (event.key.code == sf::Keyboard::Up)
     {
+      menu_snd.play();
       if (move_type == STRAIGHT)
       {
         move_type = SINE_CURVE;
@@ -110,6 +112,7 @@ void Game::keyPressed(sf::Event event)
     }
     else if (event.key.code == sf::Keyboard::Down)
     {
+      menu_snd.play();
       if (move_type == STRAIGHT)
       {
         move_type = GRAVITY;
@@ -137,6 +140,7 @@ void Game::keyPressed(sf::Event event)
     }
     else if (event.key.code == sf::Keyboard::Enter)
     {
+      menu_snd.play();
       game_state = IN_GAME;
       initAliens();
     }
@@ -164,6 +168,7 @@ void Game::keyPressed(sf::Event event)
     if (event.key.code == sf::Keyboard::Up ||
         event.key.code == sf::Keyboard::Down)
     {
+      menu_snd.play();
       if (game_over_menu == TRY_ANOTHER)
       {
         game_over_menu = QUIT;
@@ -179,6 +184,7 @@ void Game::keyPressed(sf::Event event)
     }
     else if (event.key.code == sf::Keyboard::Enter)
     {
+      menu_snd.play();
       if (game_over_menu == TRY_ANOTHER)
       {
         resetGame();
@@ -316,13 +322,13 @@ void Game::initAliens()
       {
         aliens[GRID_SIZE_X * i + j].getSprite()->setPosition(
           offset+ j * aliens[GRID_SIZE_X * i + j].getSprite()->getGlobalBounds().width,
-          offset / 4 + i * aliens[GRID_SIZE_X * i + j].getSprite()->getGlobalBounds().height);
+          10.0 + i * aliens[GRID_SIZE_X * i + j].getSprite()->getGlobalBounds().height);
       }
       else if (move_type == QUADRATIC)
       {
         aliens[GRID_SIZE_X * i + j].getSprite()->setPosition(
           offset+ j * aliens[GRID_SIZE_X * i + j].getSprite()->getGlobalBounds().width,
-          offset / 2 + i * aliens[GRID_SIZE_X * i + j].getSprite()->getGlobalBounds().height);
+          offset / 1.9 + i * aliens[GRID_SIZE_X * i + j].getSprite()->getGlobalBounds().height);
         aliens[GRID_SIZE_X * i + j].getSprite()->move(
           0.0,
           -pow(0.02 * aliens[GRID_SIZE_X * i + j].getSprite()->getPosition().x - 10,2)
@@ -337,7 +343,6 @@ void Game::initAliens()
           0.0,
           -20 * sin(aliens[GRID_SIZE_X * i + j].getSprite()->getPosition().x/10)
         );
-        //
       }
     }
   }
@@ -438,9 +443,25 @@ void Game::collisionCheck()
   // Player collision with aliens
   for (int i = 0; i < GRID_SIZE_X * GRID_SIZE_Y; ++i)
   {
-    if (aliens[i].getSprite()->getGlobalBounds().intersects(
-          player.getSprite()->getGlobalBounds())&&
-        aliens[i].isInGame())
+    if (
+      aliens[i].getSprite()->getGlobalBounds().intersects(
+        player.getSprite()->getGlobalBounds()) &&
+      aliens[i].isInGame())
+    {
+      if (
+        getDistance(
+          aliens[i].getSprite()->getPosition(),
+          player.getSprite()->getPosition(),
+          *aliens[i].getSprite(),
+          *player.getSprite()) <= 60.0)
+      {
+        game_state = GAME_OVER;
+      }
+    }
+    else if (
+      (aliens[i].getSprite()->getPosition().y +
+       aliens[i].getSprite()->getGlobalBounds().height) >= window.getSize().y &&
+      aliens[i].isInGame())
     {
       game_state = GAME_OVER;
     }
@@ -458,14 +479,22 @@ void Game::collisionCheck()
             aliens[j].getSprite()->getGlobalBounds()) &&
           aliens[j].isInGame())
         {
-          player.projectiles()[i].setState(false);
-          aliens[j].destroyAlien();
-          increaseAlienSpeed();
-          player.addScore(aliens[j].getValue());
-          enemy_count -= 1;
-          if (enemy_count <= 0)
+          if (getDistance(
+                aliens[j].getSprite()->getPosition(),
+                player.projectiles()[i].getSprite()->getPosition(),
+                *aliens[j].getSprite(),
+                *player.projectiles()[i].getSprite()) <= 30.0
+             )
           {
-            game_state = GAME_OVER;
+            player.projectiles()[i].setState(false);
+            aliens[j].destroyAlien();
+            increaseAlienSpeed();
+            player.addScore(aliens[j].getValue());
+            enemy_count -= 1;
+            if (enemy_count <= 0)
+            {
+              game_state = GAME_OVER;
+            }
           }
         }
       }
@@ -486,4 +515,18 @@ void Game::resetGame()
   enemy_count = GRID_SIZE_X * GRID_SIZE_Y;
 
   game_state = IN_MENU;
+}
+
+float Game::getDistance(sf::Vector2<float> obj1_pos,
+                        sf::Vector2<float> obj2_pos,
+                        sf::Sprite obj1_spr,
+                        sf::Sprite obj2_spr
+                       )
+{
+  float x = (obj1_pos.x + obj1_spr.getGlobalBounds().width / 2) -
+            (obj2_pos.x + obj2_spr.getGlobalBounds().width / 2);
+  float y = (obj1_pos.y + obj1_spr.getGlobalBounds().height / 2) -
+            (obj2_pos.y + obj2_spr.getGlobalBounds().height / 2);
+  float distance = sqrt(pow(x,2) + pow(y,2));
+  return distance;
 }

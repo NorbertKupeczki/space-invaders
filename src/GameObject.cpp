@@ -7,6 +7,9 @@ Alien::Alien()
   speed = 50.0;
   in_game = true;
   value = 10;
+
+  explosion_sbf.loadFromFile("Data/Sound/explosion.ogg");
+  explosion_snd.setBuffer(explosion_sbf);
 }
 Alien::~Alien()
 {
@@ -33,7 +36,7 @@ bool Alien::moveAliens(float screen_w, float dt, int move_type)
   else if (move_type == 1)//GRAVITY
   {
     vector.y += GRAVITY;
-    sprite->move(vector.x * speed * dt, vector.y * dt);
+    sprite->move(vector.x * speed * dt, vector.y);
   }
   else if (move_type == 2) //QUADRATIC
   {
@@ -41,11 +44,11 @@ bool Alien::moveAliens(float screen_w, float dt, int move_type)
     float new_y = pow(0.02 * (sprite->getPosition().x + vector.x * speed * dt) - 10,2);
     float diff = curr_y - new_y;
     vector.y = diff;
-    sprite->move(vector.x * speed * dt, vector.y * speed * dt);
+    sprite->move(vector.x * speed * dt, vector.y);
   }
   else if (move_type == 3) //SINE CURVE
   {
-    float curr_y = 20 * sin(sprite->getPosition().x/10);
+    float curr_y = 20 * sin(sprite->getPosition().x / 10);
     float new_y = 20 * sin((sprite->getPosition().x + vector.x * speed * dt)/10);
     float diff = curr_y - new_y;
     vector.y = diff;
@@ -77,6 +80,7 @@ bool Alien::isInGame()
 
 void Alien::destroyAlien()
 {
+  explosion_snd.play();
   in_game = false;
 }
 

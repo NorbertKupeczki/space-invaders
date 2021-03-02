@@ -3,10 +3,10 @@
 #define SPACEINVADERS_GAME_H
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include "Vector2.h"
 #include "GameObject.h"
 #include "Player.h"
-
 
 class Game
 {
@@ -36,6 +36,10 @@ class Game
   void movePlayer(float dt);
   void collisionCheck();
   void resetGame();
+  float getDistance(sf::Vector2<float> obj1_pos,
+                    sf::Vector2<float> obj2_pos,
+                    sf::Sprite obj1_spr,
+                    sf::Sprite obj2_spr);
 
   sf::Font font;
   sf::Text player_score;
@@ -70,6 +74,9 @@ class Game
   sf::Texture alien_ship;
   sf::Texture laser_green;
 
+  sf::Sound menu_snd;
+  sf::SoundBuffer menu_sbf;
+
   Alien* aliens = nullptr;
   PlayerShip player;
   const int GRID_SIZE_X = 10;
@@ -100,7 +107,6 @@ class Game
   MoveType move_type;
   GameState game_state;
   GameOver game_over_menu;
-
 };
 
 #endif // SPACEINVADERS_GAME_H

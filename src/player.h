@@ -3,6 +3,7 @@
 #include "Laser.h"
 #include "Vector2.h"
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 
 class PlayerShip
 {
@@ -36,6 +37,9 @@ class PlayerShip
   Laser* laser = nullptr;
   const int MAX_PROJECTILE = 5;
   const float RATE_OF_FIRE = 0.3;
+
+  sf::Sound laser_snd;
+  sf::SoundBuffer laser_sbf;
 
 };
 
