@@ -69,6 +69,13 @@ class Game
   sf::Sprite quit_button;
   sf::Texture quit_active;
   sf::Texture quit_inactive;
+  sf::Sprite controls_spr;
+  sf::Texture controls_texture;
+  sf::Sprite tooltip_spr;
+  sf::Texture tooltip_straight;
+  sf::Texture tooltip_gravity;
+  sf::Texture tooltip_quadratic;
+  sf::Texture tooltip_sine;
 
   sf::Texture player_ship;
   sf::Texture alien_ship;

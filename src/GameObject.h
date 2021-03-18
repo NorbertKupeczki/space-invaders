@@ -18,6 +18,7 @@ class Alien
   void destroyAlien();
   int getValue();
   void addSpeed(float speed_up);
+  void setYSpeed(float new_speed);
 
  private:
   bool in_game;
@@ -25,7 +26,7 @@ class Alien
   float speed;
   Vector2 vector = {1.0,0.0};
   int value;
-  const float GRAVITY = 0.0025;
+  const float GRAVITY = 1.008;
 
   sf::Sound explosion_snd;
   sf::SoundBuffer explosion_sbf;

@@ -116,7 +116,7 @@ int PlayerShip::getMaxProjectile()
   return MAX_PROJECTILE;
 }
 
-Laser * PlayerShip::projectiles()
+Laser* PlayerShip::projectiles()
 {
   return laser;
 }

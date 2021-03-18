@@ -58,11 +58,13 @@ void Game::render()
 
   if (game_state == IN_MENU)
   {
+    window.draw(controls_spr);
     window.draw(menu_bg);
     window.draw(straight_button);
     window.draw(gravity_button);
     window.draw(quadratic_button);
     window.draw(sine_button);
+    window.draw(tooltip_spr);
   }
 
   if (game_state == GAME_OVER)
@@ -88,24 +90,28 @@ void Game::keyPressed(sf::Event event)
       if (move_type == STRAIGHT)
       {
         move_type = SINE_CURVE;
+        tooltip_spr.setTexture(tooltip_sine);
         straight_button.setTexture(straight_inactive);
         sine_button.setTexture(sine_active);
       }
       else if (move_type == GRAVITY)
       {
         move_type = STRAIGHT;
+        tooltip_spr.setTexture(tooltip_straight);
         gravity_button.setTexture(gravity_inactive);
         straight_button.setTexture(straight_active);
       }
       else if (move_type == QUADRATIC)
       {
         move_type = GRAVITY;
+        tooltip_spr.setTexture(tooltip_gravity);
         quadratic_button.setTexture(quadratic_inactive);
         gravity_button.setTexture(gravity_active);
       }
       else if (move_type == SINE_CURVE)
       {
         move_type = QUADRATIC;
+        tooltip_spr.setTexture(tooltip_quadratic);
         sine_button.setTexture(sine_inactive);
         quadratic_button.setTexture(quadratic_active);
       }
@@ -116,24 +122,28 @@ void Game::keyPressed(sf::Event event)
       if (move_type == STRAIGHT)
       {
         move_type = GRAVITY;
+        tooltip_spr.setTexture(tooltip_gravity);
         straight_button.setTexture(straight_inactive);
         gravity_button.setTexture(gravity_active);
       }
       else if (move_type == GRAVITY)
       {
         move_type = QUADRATIC;
+        tooltip_spr.setTexture(tooltip_quadratic);
         gravity_button.setTexture(gravity_inactive);
         quadratic_button.setTexture(quadratic_active);
       }
       else if (move_type == QUADRATIC)
       {
         move_type = SINE_CURVE;
+        tooltip_spr.setTexture(tooltip_sine);
         quadratic_button.setTexture(quadratic_inactive);
         sine_button.setTexture(sine_active);
       }
       else if (move_type == SINE_CURVE)
       {
         move_type = STRAIGHT;
+        tooltip_spr.setTexture(tooltip_straight);
         sine_button.setTexture(sine_inactive);
         straight_button.setTexture(straight_active);
       }
@@ -250,6 +260,11 @@ void Game::initTextures()
   loadTexture(player_ship, "Data/Images/playerShip.png");
   loadTexture(alien_ship, "Data/Images/alienShip.png");
   loadTexture(laser_green, "Data/Images/laser_green.png");
+  loadTexture(controls_texture, controls_spr, "Data/Images/controls.png");
+  loadTexture(tooltip_straight, tooltip_spr, "Data/Images/tooltip_straight.png");
+  loadTexture(tooltip_gravity, "Data/Images/tooltip_gravity.png");
+  loadTexture(tooltip_quadratic, "Data/Images/tooltip_quadratic.png");
+  loadTexture(tooltip_sine, "Data/Images/tooltip_sine.png");
 
   bg_texture.setRepeated(true);
   bg_sprite.setTextureRect(
@@ -263,6 +278,12 @@ void Game::initMenus()
 {
   float centre_x = window.getSize().x / 2;
   float centre_y = window.getSize().y /2;
+
+  controls_spr.setPosition(centre_x - controls_spr.getGlobalBounds().width / 2,
+                           10.0);
+
+  tooltip_spr.setPosition(centre_x - tooltip_spr.getGlobalBounds().width / 2,
+                          560.0);
 
   menu_bg.setPosition(centre_x - menu_bg.getGlobalBounds().width /2,
                       centre_y - menu_bg.getGlobalBounds().height /2);
@@ -323,6 +344,10 @@ void Game::initAliens()
         aliens[GRID_SIZE_X * i + j].getSprite()->setPosition(
           offset+ j * aliens[GRID_SIZE_X * i + j].getSprite()->getGlobalBounds().width,
           10.0 + i * aliens[GRID_SIZE_X * i + j].getSprite()->getGlobalBounds().height);
+        if (move_type == GRAVITY)
+        {
+          aliens[GRID_SIZE_X * i + j].setYSpeed(1);
+        }
       }
       else if (move_type == QUADRATIC)
       {

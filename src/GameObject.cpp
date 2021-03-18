@@ -35,8 +35,8 @@ bool Alien::moveAliens(float screen_w, float dt, int move_type)
   }
   else if (move_type == 1)//GRAVITY
   {
-    vector.y += GRAVITY;
-    sprite->move(vector.x * speed * dt, vector.y);
+    vector.y *= GRAVITY;
+    sprite->move(vector.x * speed * dt, vector.y * dt);
   }
   else if (move_type == 2) //QUADRATIC
   {
@@ -92,4 +92,9 @@ int Alien::getValue()
 void Alien::addSpeed(float speed_up)
 {
   speed += speed_up;
+}
+
+void Alien::setYSpeed(float new_speed)
+{
+  vector.y = new_speed;
 }
